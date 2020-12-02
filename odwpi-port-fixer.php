@@ -25,14 +25,20 @@ add_action( 'admin_init', 'port_fixer_admin_init' );
  * @return void
  */
 function port_fixer_admin_init() {
+	/**
+	 * This filter is fired during while Wordpress prepares the site data for insertion or update in the database.
+	 * When WordPress is using a different port it removes the ':' from the domain which cause issues whenever the site domain is referenced. 
+	 * @link https://core.trac.wordpress.org/browser/tags/5.5.1/src/wp-includes/ms-site.php#L498
+	 * @link https://developer.wordpress.org/reference/functions/wp_normalize_site_data/
+	 */
 	add_filter('wp_normalize_site_data', 'correct_new_site_data');
 }
 
 /**
- * Correct New Site Data when instance is listening on a different port
+ * Normalize data for a site prior to inserting or updating in the database when using a different port.
  *
- * @param  mixed $data
- * @return void
+ * @param  array $data Associative array of site data passed to the respective function.
+ * @return array
  */
 function correct_new_site_data( $data ){
 	$port = getenv('WEB_PORT');
